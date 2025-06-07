@@ -1,7 +1,7 @@
 export interface IRunePressCondition {
 	variable: string;
 	condition: "equals" | "not_equals" | "greater_than" | "less_than";
-	value: string | number | boolean;
+	value: number;
 }
 
 export type ActionType =
@@ -15,7 +15,7 @@ export type ActionType =
 export interface ISetVariableAction {
 	actionType: "set_variable";
 	variable: string;
-	value: string | number | boolean;
+	value: number;
 }
 
 export interface IIncrementVariableAction {
@@ -42,6 +42,8 @@ export interface IRollDiceAction {
 
 export interface IResetAction {
 	actionType: "reset";
+	resetVariables?: string[]; // Optional list of variables to reset
+	resetAll?: boolean; // If true, reset all variables
 }
 
 export type IRunePressAction =
@@ -54,5 +56,15 @@ export type IRunePressAction =
 
 export interface IRunePressActionBlock {
 	actions: IRunePressAction[];
-	condition?: IRunePressCondition;
+	actionsElse: IRunePressAction[]; // if any condition fails, these actions will be executed
+	conditions: IRunePressCondition[];
 }
+
+export type ActionByType<T extends string> = Extract<
+	IRunePressAction,
+	{ actionType: T }
+>;
+
+export type SpecificActionEvaluators = {
+	[K in IRunePressAction["actionType"]]: (action: ActionByType<K>) => void;
+};
