@@ -11,6 +11,9 @@ importers:
       '@types/handlebars':
         specifier: ^4.1.0
         version: 4.1.0
+      dice-roller-parser:
+        specifier: ^0.1.8
+        version: 0.1.8
       handlebars:
         specifier: ^4.7.8
         version: 4.7.8
@@ -1131,6 +1134,9 @@ packages:
   degenerator@5.0.1:
     resolution: {integrity: sha512-TllpMR/t0M5sqCXfj85i4XaAzxmS5tVA16dqvdkMwGmzI+dXLXnw3J+3Vdv7VKw+ThlTMboK6i9rnZ6Nntj5CQ==}
     engines: {node: '>= 14'}
+
+  dice-roller-parser@0.1.8:
+    resolution: {integrity: sha512-/UYDWMX1FHU6RR3iZGfexKlqyBJXSPuHPkvvpZ8k3QVjaXVc56W5GeLc/0bf9qLZTn1YdVFrIBLzvBt/9UHoNw==}
 
   dot-prop@5.3.0:
     resolution: {integrity: sha512-QM8q3zDe58hqUqjraQOmzZ1LIH9SWQJTlEKCH4kJ2oQvLZk7RbQXvtDM2XEq3fwkV9CCvvH4LA0AV+ogFsBM2Q==}
@@ -3516,6 +3522,8 @@ snapshots:
       ast-types: 0.13.4
       escodegen: 2.1.0
       esprima: 4.0.1
+
+  dice-roller-parser@0.1.8: {}
 
   dot-prop@5.3.0:
     dependencies:

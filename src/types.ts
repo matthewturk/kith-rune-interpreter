@@ -56,8 +56,8 @@ export type IRunePressAction =
 
 export interface IRunePressActionBlock {
 	actions: IRunePressAction[];
-	actionsElse: IRunePressAction[]; // if any condition fails, these actions will be executed
-	conditions: IRunePressCondition[];
+	actionsElse: IRunePressAction[] | []; // if any condition fails, these actions will be executed
+	conditions: IRunePressCondition[] | [];
 }
 
 export type ActionByType<T extends string> = Extract<

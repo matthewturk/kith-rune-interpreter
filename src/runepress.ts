@@ -10,6 +10,7 @@ import {
 } from "./types.js";
 
 import Handlebars from "handlebars";
+import { DiceRoller } from "dice-roller-parser";
 
 export class ObjectWithRunes {
 	actions: IRunePressActionBlock[] = [];
@@ -59,8 +60,10 @@ export class ObjectWithRunes {
 		},
 		roll_dice: (action: IRollDiceAction) => {
 			// Placeholder for dice rolling logic
-			console.warn(`Rolling dice with expression: ${action.diceExpression}`);
 			// You would implement the actual dice rolling logic here
+			const roller = new DiceRoller();
+			const result = roller.roll(action.diceExpression);
+			this.variables[action.variable] = result.value;
 		},
 		reset: (action: IResetAction) => {
 			if (action.resetAll) {

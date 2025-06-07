@@ -1,0 +1,35 @@
+{
+	"example_object": {
+		"name": "Example Object",
+		"description": "An example object for testing purposes",
+		"block": {
+			"actions": [
+				{
+					"actionType": "output_message",
+					"message": "Hello, world!"
+				}
+			],
+			"actionsElse": [],
+			"conditions": []
+		}
+	},
+	"increments_and_logs": {
+		"name": "Increments and Logs",
+		"description": "An object that increments a value and logs it",
+		"block": {
+			"actions": [
+				{
+					"actionType": "increment_variable",
+					"value": 1,
+					"variable": "example_value"
+				},
+				{
+					"actionType": "output_message",
+					"message": "{{example_value}}"
+				}
+			],
+			"actionsElse": [],
+			"conditions": []
+		}
+	}
+}

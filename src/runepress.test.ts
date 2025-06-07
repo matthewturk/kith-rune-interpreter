@@ -2,10 +2,21 @@ import { describe, expect, it, vi } from "vitest";
 
 import { ObjectWithRunes } from "./runepress.js";
 
+import testData from "../test-assets/example-objects.json";
+import { IRunePressActionBlock } from "./types.js";
+
 const message = "Yay, testing!";
 const messageBad = "Oh no, something went wrong!";
 
 describe(ObjectWithRunes, () => {
+	it("logs to the console", () => {
+		const logger = vi.spyOn(console, "log").mockImplementation(() => undefined);
+		const obj = new ObjectWithRunes();
+		obj.addActionBlock(testData.example_object.block as IRunePressActionBlock);
+		obj.pressRune(1);
+		expect(logger).toHaveBeenCalledWith("Hello, world!");
+		expect(logger).toHaveBeenCalledTimes(1);
+	});
 	it("logs to the console once when message is provided as a string", () => {
 		const logger = vi.spyOn(console, "log").mockImplementation(() => undefined);
 
@@ -25,6 +36,22 @@ describe(ObjectWithRunes, () => {
 
 		expect(logger).toHaveBeenCalledWith(message);
 		expect(logger).toHaveBeenCalledTimes(1);
+	});
+
+	it("logs variable value on press", () => {
+		const logger = vi.spyOn(console, "log").mockImplementation(() => undefined);
+		const obj = new ObjectWithRunes();
+		obj.addActionBlock(
+			testData.increments_and_logs.block as IRunePressActionBlock,
+		);
+		obj.pressRune(1);
+		expect(logger).toHaveBeenCalledTimes(1);
+		expect(logger).toHaveBeenCalledWith("1");
+		//logger.mockReset();
+		logger.mockClear();
+		obj.pressRune(2);
+		expect(logger).toHaveBeenCalledTimes(1);
+		expect(logger).toHaveBeenCalledWith("2");
 	});
 
 	it("does nothing when wrong rune is pressed", () => {
@@ -195,5 +222,33 @@ describe(ObjectWithRunes, () => {
 		expect(logger).toHaveBeenCalledTimes(1);
 		obj.pressRune(2);
 		expect(obj.variables.pressed).toBe(1);
+	});
+
+	it("roll dice whenever rune 5 is pressed", () => {
+		const logger = vi.spyOn(console, "log").mockImplementation(() => undefined);
+
+		const obj = new ObjectWithRunes();
+		obj.addActionBlock({
+			actions: [
+				{
+					actionType: "roll_dice",
+					diceExpression: "2d6+3",
+					variable: "result",
+				},
+			],
+			actionsElse: [],
+			conditions: [
+				{
+					variable: "rune",
+					condition: "equals",
+					value: 5,
+				},
+			],
+		});
+		obj.pressRune(5);
+		expect(obj.variables.result).toBeDefined();
+		expect(obj.variables.result).toBeGreaterThanOrEqual(5);
+		//expect(logger).toHaveBeenCalledWith("Rolling dice with expression: 2d6+3");
+		expect(logger).toHaveBeenCalledTimes(0);
 	});
 });
