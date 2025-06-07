@@ -9,6 +9,8 @@ import {
 	IResetAction,
 } from "./types.js";
 
+import Handlebars from "handlebars";
+
 export class ObjectWithRunes {
 	actions: IRunePressActionBlock[] = [];
 	variables: Record<string, number> = {};
@@ -23,7 +25,10 @@ export class ObjectWithRunes {
 	};
 	actionEvaluators: SpecificActionEvaluators = {
 		output_message: (action: IOutputMessageAction) => {
-			console.log(action.message);
+			// Use Handlebars to process the message with the current variables
+			const template = Handlebars.compile(action.message);
+			const message = template(this.variables);
+			console.log(message);
 		},
 		set_variable: (action: ISetVariableAction) => {
 			this.variables[action.variable] = action.value;
@@ -95,9 +100,6 @@ export class ObjectWithRunes {
 					)
 				) {
 					conditionMet = false;
-					console.error(
-						`Condition evaluator for ${condition.condition} not found.`,
-					);
 					break;
 				}
 			}

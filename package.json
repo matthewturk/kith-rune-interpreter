@@ -52,5 +52,9 @@
 	},
 	"publishConfig": {
 		"provenance": true
+	},
+	"dependencies": {
+		"@types/handlebars": "^4.1.0",
+		"handlebars": "^4.7.8"
 	}
 }
