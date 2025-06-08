@@ -9,14 +9,18 @@ import { IRunePressActionBlock } from "./types.js";
 const message = "Yay, testing!";
 const messageBad = "Oh no, something went wrong!";
 
+function loadExampleObjectData(objectName: string): ObjectWithRunes {
+	const obj = new ObjectWithRunes();
+	for (const block of dereferenceSync(testData)[objectName].blocks) {
+		obj.addActionBlock(block as IRunePressActionBlock);
+	}
+	return obj;
+}
+
 describe(ObjectWithRunes, () => {
-	const exampleObjectData = dereferenceSync(testData);
 	it("logs to the console", () => {
 		const logger = vi.spyOn(console, "log").mockImplementation(() => undefined);
-		const obj = new ObjectWithRunes();
-		for (const block of exampleObjectData.example_object.blocks) {
-			obj.addActionBlock(block as IRunePressActionBlock);
-		}
+		const obj = loadExampleObjectData("example_object");
 		obj.pressRune(1);
 		expect(logger).toHaveBeenCalledWith("Hello, world!");
 		expect(logger).toHaveBeenCalledTimes(1);
@@ -44,10 +48,7 @@ describe(ObjectWithRunes, () => {
 
 	it("checks that rune activation works", () => {
 		const logger = vi.spyOn(console, "log").mockImplementation(() => undefined);
-		const obj = new ObjectWithRunes();
-		for (const block of exampleObjectData.doorlock_activation.blocks) {
-			obj.addActionBlock(block as IRunePressActionBlock);
-		}
+		const obj = loadExampleObjectData("doorlock_activation");
 		obj.pressRune(8);
 		expect(obj.variables.activated).toBe(1);
 		obj.pressRune(3);
@@ -266,5 +267,22 @@ describe(ObjectWithRunes, () => {
 		expect(obj.variables.result).toBeGreaterThanOrEqual(5);
 		//expect(logger).toHaveBeenCalledWith("Rolling dice with expression: 2d6+3");
 		expect(logger).toHaveBeenCalledTimes(0);
+	});
+
+	it("increments danger level and then explodes", () => {
+		const logger = vi.spyOn(console, "log").mockImplementation(() => undefined);
+		const obj = loadExampleObjectData("doorlock_trapped");
+		obj.diceRoller.randFunction = () => 0; // Force the dice roll to always return 1 for testing
+		obj.pressRune(8);
+		expect(obj.variables.danger_level).toBeUndefined();
+		obj.pressRune(5);
+		expect(obj.variables.danger_level).toBe(10);
+		expect(logger).toHaveBeenCalledTimes(1);
+		expect(logger).toHaveBeenCalledWith("It happened!");
+		obj.pressRune(8);
+		expect(obj.variables.danger_level).toBe(10);
+		expect(logger).toHaveBeenCalledTimes(1);
+		obj.pressRune(5);
+		expect(logger).toHaveBeenCalledTimes(2);
 	});
 });

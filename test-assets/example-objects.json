@@ -48,6 +48,24 @@
 			}
 		]
 	},
+	"doorlock_trapped": {
+		"name": "Trapped Lock",
+		"description": "A lock that can be trapped",
+		"blocks": [
+			{
+				"$ref": "#/commonBlocks/activate"
+			},
+			{
+				"$ref": "#/commonBlocks/deactivate"
+			},
+			{
+				"$ref": "#/commonBlocks/increment_danger"
+			},
+			{
+				"$ref": "#/commonBlocks/check_danger"
+			}
+		]
+	},
 	"commonBlocks": {
 		"activate": {
 			"actions": [
@@ -86,50 +104,57 @@
 				}
 			]
 		},
-		"message": [
-			{
-				"actions": [
-					{
-						"actionType": "output_message",
-						"message": "This is a common action"
-					}
-				],
-				"conditions": []
-			}
-		],
-		"increment_danger": [
-			{
-				"actions": [
-					{
-						"actionType": "increment_variable",
-						"variable": "danger_level",
-						"value": 10
-					},
-					{
-						"actionType": "roll_dice",
-						"diceExpression": "1d100",
-						"variable": "danger_roll"
-					}
-				],
-				"conditions": []
-			}
-		],
-		"check_danger": [
-			{
-				"actions": [
-					{
-						"actionType": "output_message",
-						"message": "It happened!"
-					}
-				],
-				"conditions": [
-					{
-						"condition": "greater_than",
-						"variable": "danger_roll",
-						"value": "danger_level"
-					}
-				]
-			}
-		]
+		"message": {
+			"actions": [
+				{
+					"actionType": "output_message",
+					"message": "This is a common action"
+				}
+			],
+			"conditions": []
+		},
+		"increment_danger": {
+			"actions": [
+				{
+					"actionType": "increment_variable",
+					"variable": "danger_level",
+					"value": 10
+				},
+				{
+					"actionType": "roll_dice",
+					"diceExpression": "1d100",
+					"variable": "danger_roll"
+				}
+			],
+			"actionsElse": [
+				{
+					"actionType": "set_variable",
+					"variable": "danger_roll",
+					"value": 100
+				}
+			],
+			"conditions": [
+				{
+					"condition": "not_in",
+					"variable": "rune",
+					"value": [3, 8]
+				}
+			]
+		},
+		"check_danger": {
+			"actions": [
+				{
+					"actionType": "output_message",
+					"message": "It happened!"
+				}
+			],
+			"conditions": [
+				{
+					"condition": "less_than",
+					"variable": "danger_roll",
+					"value": "danger_level"
+				}
+			]
+		}
 	}
 }

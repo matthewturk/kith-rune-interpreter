@@ -15,14 +15,39 @@ import { DiceRoller } from "dice-roller-parser";
 export class ObjectWithRunes {
 	actions: IRunePressActionBlock[] = [];
 	variables: Record<string, number> = {};
+	diceRoller: DiceRoller = new DiceRoller();
 	conditionEvaluators: Record<
 		string,
-		(variable: string, value: number) => boolean
+		(variable: string, value: string | number) => boolean
 	> = {
-		equals: (variable, value) => this.variables[variable] === value,
-		not_equals: (variable, value) => this.variables[variable] !== value,
-		greater_than: (variable, value) => this.variables[variable] > value,
-		less_than: (variable, value) => this.variables[variable] < value,
+		equals: (variable, value) => {
+			if (typeof value === "string") {
+				// If the value is a string, it might be a variable name
+				value = this.variables[value] || value; // Fallback to the variable name if not found
+			}
+
+			return this.variables[variable] === value;
+		},
+		not_equals: (variable, value) => {
+			if (typeof value === "string") {
+				// If the value is a string, it might be a variable name
+				value = this.variables[value] || value; // Fallback to the variable name if not found
+			}
+
+			return this.variables[variable] !== value;
+		},
+		greater_than: (variable, value) => {
+			if (typeof value === "string") {
+				value = this.variables[value] || value;
+			}
+			return this.variables[variable] > value;
+		},
+		less_than: (variable, value) => {
+			if (typeof value === "string") {
+				value = this.variables[value] || value;
+			}
+			return this.variables[variable] < value;
+		},
 		one_of: (variable, value) => {
 			const validValues = Array.isArray(value) ? value : [value];
 			return validValues.includes(this.variables[variable]);
@@ -67,11 +92,9 @@ export class ObjectWithRunes {
 				(this.variables[action.variable] || 0) - value;
 		},
 		roll_dice: (action: IRollDiceAction) => {
-			// Placeholder for dice rolling logic
-			// You would implement the actual dice rolling logic here
-			const roller = new DiceRoller();
-			const result = roller.roll(action.diceExpression);
-			this.variables[action.variable] = result.value;
+			this.variables[action.variable] = this.diceRoller.roll(
+				action.diceExpression,
+			).value;
 		},
 		reset: (action: IResetAction) => {
 			if (action.resetAll) {
@@ -99,7 +122,7 @@ export class ObjectWithRunes {
 		//console.log(`Rune pressed: ${rune}`);
 		for (const block of this.actions) {
 			let conditionMet = true;
-			for (const condition of block.conditions) {
+			for (const condition of block.conditions || []) {
 				// Here you would check the condition and execute actions if it passes
 				// This is a placeholder for actual condition checking logic
 				//console.warn(this.conditionEvaluators);
