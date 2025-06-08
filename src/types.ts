@@ -1,6 +1,6 @@
 export interface IRunePressCondition {
-	variable: string;
 	condition: "equals" | "not_equals" | "greater_than" | "less_than";
+	variable: string;
 	value: number;
 }
 
@@ -56,8 +56,8 @@ export type IRunePressAction =
 
 export interface IRunePressActionBlock {
 	actions: IRunePressAction[];
-	actionsElse: IRunePressAction[] | []; // if any condition fails, these actions will be executed
-	conditions: IRunePressCondition[] | [];
+	actionsElse: IRunePressAction[]; // if any condition fails, these actions will be executed
+	conditions: IRunePressCondition[];
 }
 
 export type ActionByType<T extends string> = Extract<

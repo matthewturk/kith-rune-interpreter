@@ -107,7 +107,7 @@ export class ObjectWithRunes {
 				}
 			}
 			const actions = conditionMet ? block.actions : block.actionsElse;
-			for (const action of actions) {
+			for (const action of actions || []) {
 				// Here you would execute the action
 				// This is a placeholder for actual action execution logic
 				this.actionEvaluators[action.actionType](action);

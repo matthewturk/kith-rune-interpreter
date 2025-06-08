@@ -2,34 +2,100 @@
 	"example_object": {
 		"name": "Example Object",
 		"description": "An example object for testing purposes",
-		"block": {
-			"actions": [
-				{
-					"actionType": "output_message",
-					"message": "Hello, world!"
-				}
-			],
-			"actionsElse": [],
-			"conditions": []
-		}
+		"blocks": [
+			{
+				"actions": [
+					{
+						"actionType": "output_message",
+						"message": "Hello, world!"
+					}
+				],
+				"actionsElse": [],
+				"conditions": []
+			}
+		]
 	},
 	"increments_and_logs": {
 		"name": "Increments and Logs",
 		"description": "An object that increments a value and logs it",
-		"block": {
+		"blocks": [
+			{
+				"actions": [
+					{
+						"actionType": "increment_variable",
+						"value": 1,
+						"variable": "example_value"
+					},
+					{
+						"actionType": "output_message",
+						"message": "{{example_value}}"
+					}
+				],
+				"actionsElse": [],
+				"conditions": []
+			}
+		]
+	},
+	"doorlock_activation": {
+		"name": "Lock Activation",
+		"description": "Standard Lock Activation",
+		"blocks": [
+			{
+				"$ref": "#/commonBlocks/activate"
+			},
+			{
+				"$ref": "#/commonBlocks/deactivate"
+			}
+		]
+	},
+	"commonBlocks": {
+		"activate": {
 			"actions": [
 				{
-					"actionType": "increment_variable",
-					"value": 1,
-					"variable": "example_value"
-				},
-				{
-					"actionType": "output_message",
-					"message": "{{example_value}}"
+					"actionType": "set_variable",
+					"variable": "activated",
+					"value": 1
 				}
 			],
-			"actionsElse": [],
-			"conditions": []
-		}
+			"conditions": [
+				{
+					"condition": "equals",
+					"variable": "rune",
+					"value": 8
+				}
+			]
+		},
+		"deactivate": {
+			"actions": [
+				{
+					"actionType": "set_variable",
+					"variable": "activated",
+					"value": 0
+				}
+			],
+			"conditions": [
+				{
+					"condition": "equals",
+					"variable": "rune",
+					"value": 3
+				},
+				{
+					"condition": "equals",
+					"variable": "activated",
+					"value": 1
+				}
+			]
+		},
+		"message": [
+			{
+				"actions": [
+					{
+						"actionType": "output_message",
+						"message": "This is a common action"
+					}
+				],
+				"conditions": []
+			}
+		]
 	}
 }

@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { dereferenceSync } from "dereference-json-schema";
 
 import { ObjectWithRunes } from "./runepress.js";
 
@@ -9,10 +10,13 @@ const message = "Yay, testing!";
 const messageBad = "Oh no, something went wrong!";
 
 describe(ObjectWithRunes, () => {
+	const exampleObjectData = dereferenceSync(testData);
 	it("logs to the console", () => {
 		const logger = vi.spyOn(console, "log").mockImplementation(() => undefined);
 		const obj = new ObjectWithRunes();
-		obj.addActionBlock(testData.example_object.block as IRunePressActionBlock);
+		for (const block of exampleObjectData.example_object.blocks) {
+			obj.addActionBlock(block as IRunePressActionBlock);
+		}
 		obj.pressRune(1);
 		expect(logger).toHaveBeenCalledWith("Hello, world!");
 		expect(logger).toHaveBeenCalledTimes(1);
@@ -38,12 +42,22 @@ describe(ObjectWithRunes, () => {
 		expect(logger).toHaveBeenCalledTimes(1);
 	});
 
+	it("checks that rune activation works", () => {
+		const logger = vi.spyOn(console, "log").mockImplementation(() => undefined);
+		const obj = new ObjectWithRunes();
+		for (const block of exampleObjectData.doorlock_activation.blocks) {
+			obj.addActionBlock(block as IRunePressActionBlock);
+		}
+		obj.pressRune(8);
+		expect(obj.variables.activated).toBe(1);
+	});
+
 	it("logs variable value on press", () => {
 		const logger = vi.spyOn(console, "log").mockImplementation(() => undefined);
 		const obj = new ObjectWithRunes();
-		obj.addActionBlock(
-			testData.increments_and_logs.block as IRunePressActionBlock,
-		);
+		for (const block of testData.increments_and_logs.blocks) {
+			obj.addActionBlock(block as IRunePressActionBlock);
+		}
 		obj.pressRune(1);
 		expect(logger).toHaveBeenCalledTimes(1);
 		expect(logger).toHaveBeenCalledWith("1");
