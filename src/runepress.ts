@@ -23,6 +23,14 @@ export class ObjectWithRunes {
 		not_equals: (variable, value) => this.variables[variable] !== value,
 		greater_than: (variable, value) => this.variables[variable] > value,
 		less_than: (variable, value) => this.variables[variable] < value,
+		one_of: (variable, value) => {
+			const validValues = Array.isArray(value) ? value : [value];
+			return validValues.includes(this.variables[variable]);
+		},
+		not_in: (variable, value) => {
+			const invalidValues = Array.isArray(value) ? value : [value];
+			return !invalidValues.includes(this.variables[variable]);
+		},
 	};
 	actionEvaluators: SpecificActionEvaluators = {
 		output_message: (action: IOutputMessageAction) => {

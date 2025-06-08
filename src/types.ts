@@ -1,7 +1,13 @@
 export interface IRunePressCondition {
-	condition: "equals" | "not_equals" | "greater_than" | "less_than";
+	condition:
+		| "equals"
+		| "not_equals"
+		| "greater_than"
+		| "less_than"
+		| "one_of"
+		| "not_in";
 	variable: string;
-	value: number;
+	value: number | number[]; // Can be a single number or an array of numbers for "one_of" and "not_in"
 }
 
 export type ActionType =

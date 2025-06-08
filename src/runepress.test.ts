@@ -50,6 +50,8 @@ describe(ObjectWithRunes, () => {
 		}
 		obj.pressRune(8);
 		expect(obj.variables.activated).toBe(1);
+		obj.pressRune(3);
+		expect(obj.variables.activated).toBe(0);
 	});
 
 	it("logs variable value on press", () => {

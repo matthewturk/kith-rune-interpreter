@@ -96,6 +96,40 @@
 				],
 				"conditions": []
 			}
+		],
+		"increment_danger": [
+			{
+				"actions": [
+					{
+						"actionType": "increment_variable",
+						"variable": "danger_level",
+						"value": 10
+					},
+					{
+						"actionType": "roll_dice",
+						"diceExpression": "1d100",
+						"variable": "danger_roll"
+					}
+				],
+				"conditions": []
+			}
+		],
+		"check_danger": [
+			{
+				"actions": [
+					{
+						"actionType": "output_message",
+						"message": "It happened!"
+					}
+				],
+				"conditions": [
+					{
+						"condition": "greater_than",
+						"variable": "danger_roll",
+						"value": "danger_level"
+					}
+				]
+			}
 		]
 	}
 }
