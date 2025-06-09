@@ -1,2 +1,2 @@
-export * from "./greet.js";
+export * from "./runepress.js";
 export * from "./types.js";
