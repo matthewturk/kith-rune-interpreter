@@ -146,6 +146,11 @@
 				{
 					"actionType": "output_message",
 					"message": "It happened!"
+				},
+				{
+					"actionType": "set_variable",
+					"variable": "danger_activated",
+					"value": 1
 				}
 			],
 			"conditions": [

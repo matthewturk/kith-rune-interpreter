@@ -17,11 +17,17 @@ export class ObjectWithRunes {
 	actions: IRunePressActionBlock[] = [];
 	variables: Record<string, number | undefined> = {};
 	diceRoller: DiceRoller = new DiceRoller();
+	logger: (message: string) => void = (message: string) => {
+		return;
+	};
 	conditionEvaluators: Record<
 		string,
 		(variable: string, value: string | number) => boolean
 	> = {
 		equals: (variable, value) => {
+			this.logger(
+				`Checking if ${variable} equals ${value}: ${this.variables[variable] === value}`,
+			);
 			if (typeof value === "string") {
 				// If the value is a string, it might be a variable name
 				value = this.variables[value] ?? value; // Fallback to the variable name if not found
@@ -30,6 +36,7 @@ export class ObjectWithRunes {
 			return this.variables[variable] === value;
 		},
 		not_equals: (variable, value) => {
+			this.logger(`Checking if ${variable} does not equal ${value}`);
 			if (typeof value === "string") {
 				// If the value is a string, it might be a variable name
 				value = this.variables[value] ?? value; // Fallback to the variable name if not found
@@ -38,6 +45,7 @@ export class ObjectWithRunes {
 			return this.variables[variable] !== value;
 		},
 		greater_than: (variable, value) => {
+			this.logger(`Checking if ${variable} is greater than ${value}`);
 			if (this.variables[variable] === undefined) {
 				return false; // If the variable is undefined, treat it as less than any defined value
 			}
@@ -50,6 +58,7 @@ export class ObjectWithRunes {
 			return this.variables[variable] > value;
 		},
 		less_than: (variable, value) => {
+			this.logger(`Checking if ${variable} is less than ${value}`);
 			if (this.variables[variable] === undefined) {
 				return false; // If the variable is undefined, treat it as greater than any defined value
 			}
@@ -62,6 +71,9 @@ export class ObjectWithRunes {
 			return this.variables[variable] < value;
 		},
 		one_of: (variable, value) => {
+			this.logger(
+				`Checking if ${variable} is one of ${value}: ${this.variables[variable]}`,
+			);
 			if (this.variables[variable] === undefined) {
 				return false; // If the variable is undefined, treat it as not one of any values
 			}
@@ -70,6 +82,9 @@ export class ObjectWithRunes {
 			return validValues.includes(this.variables[variable]);
 		},
 		not_in: (variable, value) => {
+			this.logger(
+				`Checking if ${variable} is not in ${value}: ${this.variables[variable]}`,
+			);
 			if (this.variables[variable] === undefined) {
 				return true; // If the variable is undefined, treat it as not in any values
 			}
@@ -82,12 +97,17 @@ export class ObjectWithRunes {
 			// Use Handlebars to process the message with the current variables
 			const template = Handlebars.compile(action.message);
 			const message = template(this.variables);
+			this.logger(`Outputting message: ${message}`);
 			console.log(message);
 		},
 		set_variable: (action: ISetVariableAction) => {
+			this.logger(`Setting variable ${action.variable} to ${action.value}`);
 			this.variables[action.variable] = action.value;
 		},
 		increment_variable: (action: IIncrementVariableAction) => {
+			this.logger(
+				`Incrementing variable ${action.variable} by ${action.value}`,
+			);
 			let value: number;
 			if (typeof action.value === "string") {
 				// If the value is a variable name, retrieve its value
@@ -100,6 +120,9 @@ export class ObjectWithRunes {
 				(this.variables[action.variable] ?? 0) + value;
 		},
 		decrement_variable: (action: IDecrementVariableAction) => {
+			this.logger(
+				`Decrementing variable ${action.variable} by ${action.value}`,
+			);
 			let value: number;
 			if (typeof action.value === "string") {
 				// If the value is a variable name, retrieve its value
@@ -112,15 +135,19 @@ export class ObjectWithRunes {
 				(this.variables[action.variable] ?? 0) - value;
 		},
 		roll_dice: (action: IRollDiceAction) => {
+			this.logger(
+				`Rolling dice with expression ${action.diceExpression} and storing result in ${action.variable}`,
+			);
 			this.variables[action.variable] = this.diceRoller.roll(
 				action.diceExpression,
 			).value;
 		},
 		reset: (action: IResetAction) => {
+			this.logger(`Reseting variables.`);
+
 			if (action.resetAll) {
 				this.variables = {};
-			}
-			if (action.resetVariables) {
+			} else if (action.resetVariables) {
 				for (const variable of action.resetVariables) {
 					this.variables[variable] = undefined;
 				}
@@ -139,7 +166,6 @@ export class ObjectWithRunes {
 
 	pressRune(rune: number): void {
 		this.variables.rune = rune;
-		//console.log(`Rune pressed: ${rune}`);
 		for (const block of this.actions) {
 			let conditionMet = true;
 			for (const condition of block.conditions ?? []) {
