@@ -8,6 +8,7 @@ import {
 	IRollDiceAction,
 	IResetAction,
 	IRunePressAction,
+	ActionResult,
 } from "./types.js";
 
 import Handlebars from "handlebars";
@@ -98,11 +99,14 @@ export class ObjectWithRunes {
 			const template = Handlebars.compile(action.message);
 			const message = template(this.variables);
 			this.logger(`Outputting message: ${message}`);
-			console.log(message);
+			return message as ActionResult;
 		},
 		set_variable: (action: ISetVariableAction) => {
 			this.logger(`Setting variable ${action.variable} to ${action.value}`);
 			this.variables[action.variable] = action.value;
+			return {
+				[action.variable]: this.variables[action.variable] as ActionResult,
+			};
 		},
 		increment_variable: (action: IIncrementVariableAction) => {
 			this.logger(
@@ -118,6 +122,9 @@ export class ObjectWithRunes {
 			}
 			this.variables[action.variable] =
 				(this.variables[action.variable] ?? 0) + value;
+			return {
+				[action.variable]: this.variables[action.variable] as ActionResult,
+			};
 		},
 		decrement_variable: (action: IDecrementVariableAction) => {
 			this.logger(
@@ -133,6 +140,9 @@ export class ObjectWithRunes {
 			}
 			this.variables[action.variable] =
 				(this.variables[action.variable] ?? 0) - value;
+			return {
+				[action.variable]: this.variables[action.variable] as ActionResult,
+			};
 		},
 		roll_dice: (action: IRollDiceAction) => {
 			this.logger(
@@ -141,6 +151,9 @@ export class ObjectWithRunes {
 			this.variables[action.variable] = this.diceRoller.roll(
 				action.diceExpression,
 			).value;
+			return {
+				[action.variable]: this.variables[action.variable] as ActionResult,
+			};
 		},
 		reset: (action: IResetAction) => {
 			this.logger(`Reseting variables.`);
@@ -152,6 +165,7 @@ export class ObjectWithRunes {
 					this.variables[variable] = undefined;
 				}
 			}
+			return undefined;
 		},
 	};
 
@@ -184,13 +198,18 @@ export class ObjectWithRunes {
 				}
 			}
 			const actions = conditionMet ? block.actions : block.actionsElse;
+			const results: ActionResult[] = [];
 			for (const action of actions ?? []) {
 				// Here you would execute the action
 				// This is a placeholder for actual action execution logic
 				const evaluator = this.actionEvaluators[action.actionType] as (
 					a: IRunePressAction,
-				) => void;
-				evaluator(action);
+				) => ActionResult | undefined;
+				const result = evaluator(action);
+				if (result !== undefined) {
+					// If the action returns a result, store it
+					results.push(result);
+				}
 			}
 		}
 	}

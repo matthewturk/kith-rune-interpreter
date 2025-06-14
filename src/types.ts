@@ -71,6 +71,10 @@ export type ActionByType<T extends string> = Extract<
 	{ actionType: T }
 >;
 
+export type ActionResult = string | number | boolean | Record<string, any>;
+
 export type SpecificActionEvaluators = {
-	[K in IRunePressAction["actionType"]]: (action: ActionByType<K>) => void;
+	[K in IRunePressAction["actionType"]]: (
+		action: ActionByType<K>,
+	) => ActionResult | undefined;
 };
