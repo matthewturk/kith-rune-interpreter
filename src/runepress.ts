@@ -178,8 +178,9 @@ export class ObjectWithRunes {
 		//console.log(`Action block added: ${JSON.stringify(block)}`);
 	}
 
-	pressRune(rune: number): void {
+	pressRune(rune: number): ActionResult[] {
 		this.variables.rune = rune;
+		const results: ActionResult[] = [];
 		for (const block of this.actions) {
 			let conditionMet = true;
 			for (const condition of block.conditions ?? []) {
@@ -198,7 +199,6 @@ export class ObjectWithRunes {
 				}
 			}
 			const actions = conditionMet ? block.actions : block.actionsElse;
-			const results: ActionResult[] = [];
 			for (const action of actions ?? []) {
 				// Here you would execute the action
 				// This is a placeholder for actual action execution logic
@@ -212,5 +212,6 @@ export class ObjectWithRunes {
 				}
 			}
 		}
+		return results;
 	}
 }
