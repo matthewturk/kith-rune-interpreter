@@ -1,6 +1,6 @@
 {
 	"name": "kith-rune-interpreter",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"description": "A simple way of specifying behavior for Kith runes on the Purple Planet!",
 	"repository": {
 		"type": "git",
